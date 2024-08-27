@@ -34,7 +34,7 @@ namespace mp = boost::multiprecision;
  * @return lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  *
  */
-mp::cpp_int compute_E(mp::cpp_int n, mp::cpp_int B);
+mp::cpp_int compute_E(const mp::cpp_int& n, const mp::cpp_int& B);
 
 /**
  * "Psuedo-addition" from Lenstra's Elliptic Curve Factorization paper.
@@ -50,7 +50,7 @@ mp::cpp_int compute_E(mp::cpp_int n, mp::cpp_int B);
  *                      or d = 0 if no nontrivial divisor is found (R != inf)
  *
  */
-std::pair<ECPoint, mp::cpp_int> partial_addition(ECPoint& P, ECPoint& Q);
+std::pair<ECPoint, mp::cpp_int> partial_addition(const ECPoint& P, const ECPoint& Q);
 
 /**
  * "Psuedo-multiplication" from Lenstra's Elliptic Curve Factorization paper
@@ -87,7 +87,7 @@ std::pair<ECPoint, mp::cpp_int> partial_multiplication(mp::cpp_int k, ECPoint P)
  * @return a non-trivial divisor of n
  *
  */
-mp::cpp_int lenstra_elliptic_curve(mp::cpp_int n, mp::cpp_int B);
+mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, const mp::cpp_int& E);
 
 /**
  * Merge the prime decompositions of two non-trivial divisors of n
@@ -97,8 +97,8 @@ mp::cpp_int lenstra_elliptic_curve(mp::cpp_int n, mp::cpp_int B);
  *         where f1*f2 = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of f1*f2
  */
 std::vector<std::pair<mp::cpp_int, mp::cpp_int>> merge_factors(
-    std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f1,
-    std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f2);
+    const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f1,
+    const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f2);
 
 /**
  * Full factorization using Lenstra's Elliptic Curve method.
@@ -124,6 +124,6 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n);
  * @param factors vector of pairs (p_1, e_1), ..., (p_r, e_r),
  *        where n = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of n
  */
-void print_factors(mp::cpp_int n, std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& factors);
+void print_factors(const mp::cpp_int& n, const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& factors);
 
 #endif /* ELLIPTIC_CURVE_FACTORING_HPP */

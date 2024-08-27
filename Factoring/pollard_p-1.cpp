@@ -86,7 +86,7 @@ long long int gcd(long long int a, long long int b) {
 /**
  * Generate a random number from Z_n^* uniformly at random
  *
- * Bit Complexity: The expected number of bit operations is
+ * Bit Complexity: The expected number of draws is
  *            n / phi(n) = O(loglogn), where phi(n) is Euler's totient function.
  *
  * @param n number specifying order of multiplicative group Z_n^*
@@ -154,9 +154,8 @@ long long int compute_E(long long int n, long long int B) {
 
     std::vector<long long int> primes = sieve_of_eratosthenes(B);
     for (auto p : primes) {
-//        long long int exponent = floor_log(n, p); // floor(log_p(n))
         long long int exponent = floor_log(B, p); // floor(log_p(B))
-        E *= pow(p, exponent); // replace pow with binary exp
+        E *= pow(p, exponent); // (exponent will be small, but can still replace pow with binary exp / loop)
     }
 
     return E;

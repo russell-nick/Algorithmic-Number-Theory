@@ -95,7 +95,7 @@ long long int lcm(long long int a, long long int b) {
  * @param nums vector of numbers to take gcd of
  * @return gcd of all integers in 'nums'
  */
-long long int gcd(std::vector<long long int>& nums) {
+long long int gcd(const std::vector<long long int>& nums) {
     if (nums.size() < 2) return 1;
     
     long long int result = gcd(nums[0], nums[1]);
@@ -115,7 +115,7 @@ long long int gcd(std::vector<long long int>& nums) {
  * @param nums vector of numbers to take lcm of
  * @return lcm of all integers in 'nums'
  */
-long long int lcm(std::vector<long long int>& nums) {
+long long int lcm(const std::vector<long long int>& nums) {
     if (nums.size() == 0) return 1;
     
     long long int lcm = nums[0];

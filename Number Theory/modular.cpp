@@ -449,7 +449,7 @@ std::pair<long long int, long long int> linear_diophantine_solver(long long int 
  *        and solve (ad-bc)y = as-cr (mod n) for y
  * (Based off Thm 4.9 in Burton's Elementary Number Theory)
  *
- * @param a,b,c,d,r,s
+ * @param a,b,r,c,d,s
  * @param n modulus
  * @return unique (x, y) pair that solves the system, empty pair if no solution
  */

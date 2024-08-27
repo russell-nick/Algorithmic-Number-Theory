@@ -91,7 +91,7 @@ mp::cpp_int extended_gcd(mp::cpp_int a, mp::cpp_int b, mp::cpp_int& x, mp::cpp_i
  * @param nums vector of numbers to take lcm of
  * @return lcm of all integers in 'nums'
  */
-mp::cpp_int lcm(std::vector<mp::cpp_int>& nums);
+mp::cpp_int lcm(const std::vector<mp::cpp_int>& nums);
 
 /**
  * Miller-Rabin Prime Test (k iterations)

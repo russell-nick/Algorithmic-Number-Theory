@@ -67,7 +67,7 @@ namespace mp = boost::multiprecision;
  * @return lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  *
  */
-mp::cpp_int compute_E(mp::cpp_int n, mp::cpp_int B) {
+mp::cpp_int compute_E(const mp::cpp_int& n, const mp::cpp_int& B) {
     mp::cpp_int lcm = 1;
     for (mp::cpp_int i = 2; i <= B; i++) {
         lcm = lcm / gcd(lcm, i) * i;
@@ -115,7 +115,7 @@ mp::cpp_int compute_E(mp::cpp_int n, mp::cpp_int B) {
  *                      or d = 0 if no nontrivial divisor is found (R != inf)
  *
  */
-std::pair<ECPoint, mp::cpp_int> partial_addition(ECPoint& P, ECPoint& Q) {
+std::pair<ECPoint, mp::cpp_int> partial_addition(const ECPoint& P, const ECPoint& Q) {
     if (P.inf) return {Q, 0};
     if (Q.inf) return {P, 0};
 
@@ -237,7 +237,7 @@ std::pair<ECPoint, mp::cpp_int> partial_multiplication(mp::cpp_int k, ECPoint P)
  * @return a non-trivial divisor of n
  *
  */
-mp::cpp_int lenstra_elliptic_curve(mp::cpp_int n, mp::cpp_int B) {
+mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, const mp::cpp_int& E) {
 
     /*
      * Generate a random elliptic curve with Weierstrass form y^2 = x^3 + ax + b
@@ -272,13 +272,16 @@ mp::cpp_int lenstra_elliptic_curve(mp::cpp_int n, mp::cpp_int B) {
     }
     
     /*
-     * Choose B = L[1/2, 1/sqrt(2)] = exp( sqrt(1/2 * ln(n) * ln(ln(n))) )
-     * and slowly increase the bound as we do more iterations
+     * Here, B = L[1/2, 1/sqrt(2)] = exp( sqrt(1/2 * ln(n) * ln(ln(n))) )
+     * and we slowly increase the bound as we do more unsuccessful iterations
+     *
+     * We also take E = prod_{prime p <= B} p^(floor(log B / log p)) = lcm(1...B)
+     *
+     * Both are passed as arguments to avoid recomputation if the current
+     * elliptic curve fails to find a non-trivial factor.
      */
-    //auto B1 = exp(sqrt(0.5 * log(mp::cpp_dec_float_50(n)) * log(log(mp::cpp_dec_float_50(n)))));
-    //mp::cpp_int B = B1.convert_to<mp::cpp_int>();
     std::cout << "B: " << B << std::endl;
-    mp::cpp_int E = compute_E(n, B);
+    //mp::cpp_int E = compute_E(n, B);
     //std::cout << "E: " << E << std::endl;
     
     EllipticCurve* C = new EllipticCurve(a, b, n);
@@ -317,14 +320,15 @@ mp::cpp_int lenstra_elliptic_curve(mp::cpp_int n, mp::cpp_int B) {
  *         where f1*f2 = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of f1*f2
  */
 std::vector<std::pair<mp::cpp_int, mp::cpp_int>> merge_factors(
-    std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f1,
-    std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f2
+    const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f1,
+    const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f2
 ) {
     std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factors;
     long long int i = 0, j = 0, n1 = f1.size(), n2 = f2.size();
     if (f1.size() == 0) return f2;
     if (f2.size() == 0) return f1;
     
+    factors.reserve(n1 + n2);
     while (i < n1 && j < n2) {
         if (f1[i].first < f2[j].first) {
             factors.push_back(f1[i]);
@@ -386,8 +390,12 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
         }
         if (exp > 0) {
             small_factor_decomposition += std::to_string(p) + "^" + std::to_string(exp) + " * ";
-            std::cout << "Non-trivial divisor " << p << "^" << exp << " is prime!" << std::endl;
             small_factors.push_back({p, exp});
+            if (exp == 1) {
+                std::cout << "Non-trivial prime divisor " << p << " was found!" << std::endl;
+            } else {
+                std::cout << "Non-trivial prime power divisor " << p << "^" << exp << " was found!" << std::endl;
+            }
         }
     }
     
@@ -419,14 +427,14 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
     mp::cpp_int B = B1.convert_to<mp::cpp_int>();
     
     // If n is not prime, find a non-trivial divisor:
-    // mp::cpp_int E = compute_E(n, B);
-    // mp::cpp_int divisor = lenstra_elliptic_curve(n, B, E);
-    mp::cpp_int divisor = lenstra_elliptic_curve(n, B);
+    mp::cpp_int E = compute_E(n, B);
+    mp::cpp_int divisor = lenstra_elliptic_curve(n, B, E);
+    //mp::cpp_int divisor = lenstra_elliptic_curve(n, B);
     int num_curves = 1;
     while (divisor == 0) {
         std::cout << "Failed to find non-trivial divisor. Generating new elliptic curve." << std::endl;
-        // divisor = lenstra_elliptic_curve(n, B, E);
-        divisor = lenstra_elliptic_curve(n, B);
+        divisor = lenstra_elliptic_curve(n, B, E);
+        //divisor = lenstra_elliptic_curve(n, B);
         num_curves++;
         if (num_curves > 20) {
             B *= 2;
@@ -452,7 +460,7 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
  * @param factors vector of pairs (p_1, e_1), ..., (p_r, e_r),
  *        where n = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of n
  */
-void print_factors(mp::cpp_int n, std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& factors) {
+void print_factors(const mp::cpp_int& n, const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& factors) {
     std::cout << "\n********** Factored n **********" << std::endl;
     std::cout << n << " = ";
     for (int i = 0; i < factors.size() - 1; i++) {

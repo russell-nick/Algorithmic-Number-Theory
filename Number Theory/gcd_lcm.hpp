@@ -63,7 +63,7 @@ long long int lcm(long long int a, long long int b);
  * @param nums vector of numbers to take gcd of
  * @return gcd of all integers in 'nums'
  */
-long long int gcd(std::vector<long long int>& nums);
+long long int gcd(const std::vector<long long int>& nums);
 
 /**
  * Compute lcm(a_0, a_1, ..., a_n), where
@@ -72,6 +72,6 @@ long long int gcd(std::vector<long long int>& nums);
  * @param nums vector of numbers to take lcm of
  * @return lcm of all integers in 'nums'
  */
-long long int lcm(std::vector<long long int>& nums);
+long long int lcm(const std::vector<long long int>& nums);
 
 #endif /* GCD_LCM_HPP */
