@@ -22,7 +22,7 @@ This is mainly for personal / educational purposes, so not all algorithms have f
 - Logarithms
 	- Base-b integer conversion, calculate $\lfloor\log_b(n)\rfloor$
 - Binomial Coefficients
-	- Given $Q \in \mathbb{Z}^+$, find all non-trivial $(n, k)$ pairs such that $Q = \binom{n}{k}$ in poly$($lg$(Q))$ time
+	- Given $Q \in \mathbb{Z}^+$, find all non-trivial $(n, k)$ pairs such that $Q = \binom{n}{k}$ in poly$(lg(Q))$ time
 
 #### Factorization
 - Pollard's p-1 method
@@ -69,7 +69,7 @@ The project is currently set up as a collection of algorithms with reused code c
 - Predicting Lehmer random number generators
 
 #### Miscellaneous
-- Approximate $\ln(n)$ with absolute error $\le 1$ in poly$($lg$(n))$ time (using Maclaurin series)
+- Approximate $\ln(n)$ with absolute error $\le 1$ in poly$(lg(n))$ time (using Maclaurin series)
 - Test for nontrivial symmetry of curves with parametric form $f(t) = \displaystyle \sum_{n \in \mathbb{Z}} a_ne^{int}$, where the $a_n$ are real coefficients and $i = \sqrt{-1}$, and find the maximum value of $m$ such that $f(t)$ has $m$-fold symmetry
 - Fast Fibonacci sequence calculations
 - Fast multiplication (Karatsuba's algorithm, FFT multiplication, etc.)
