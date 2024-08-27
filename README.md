@@ -5,7 +5,9 @@
 2. [Future Work](#future-work)
 
 ## Project Overview
-This project is a collection of various algorithms related to Algorithmic / Computational Number Theory. The main topics covered are general number theory, factorization, primality testing, discrete logarithms, psuedo-randomness, and other miscellaneous mathematical topics.
+This project is a collection of various algorithms related to Algorithmic / Computational Number Theory. The main topics covered are general number theory, factorization, primality testing, discrete logarithms, psuedo-randomness, and other miscellaneous mathematical topics. 
+
+This is mainly for personal / educational purposes, so not all algorithms have fully optimized implementations for practical use. For example, my implementation of Lenstra's Elliptic Curve Factoring method uses Boost's multiprecision library, for the arbitrary precision integer type `cpp_int`, over the GNU multiprecision library (which should be faster) for simplicity. 
 
 *A brief list of currently implemented algorithms are listed below:*
 
@@ -20,7 +22,7 @@ This project is a collection of various algorithms related to Algorithmic / Comp
 - Logarithms
 	- Base-b integer conversion, calculate $\lfloor\log_b(n)\rfloor$
 - Binomial Coefficients
-	- Given $Q \in \mathbb{Z}^+$, find all non-trivial $(n, k)$ pairs such that $Q = \binom{n}{k}$ in poly$(\lg(Q))$ time
+	- Given $Q \in \mathbb{Z}^+$, find all non-trivial $(n, k)$ pairs such that $Q = \binom{n}{k}$ in poly$(\text{lg}(Q))$ time
 
 #### Factorization
 - Pollard's p-1 method
@@ -67,7 +69,7 @@ The project is currently set up as a collection of algorithms with reused code c
 - Predicting Lehmer random number generators
 
 #### Miscellaneous
-- Approximate $\ln(n)$ with absolute error $\le 1$ in poly$(\lg(n))$ time (using Maclaurin series)
+- Approximate $\ln(n)$ with absolute error $\le 1$ in poly$(\text{lg}(n))$ time (using Maclaurin series)
 - Test for nontrivial symmetry of curves with parametric form $f(t) = \displaystyle \sum_{n \in \mathbb{Z}} a_ne^{int}$, where the $a_n$ are real coefficients and $i = \sqrt{-1}$, and find the maximum value of $m$ such that $f(t)$ has $m$-fold symmetry
 - Fast Fibonacci sequence calculations
 - Fast multiplication (Karatsuba's algorithm, FFT multiplication, etc.)
