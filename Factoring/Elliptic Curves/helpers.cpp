@@ -142,20 +142,46 @@ mp::cpp_int gcd(mp::cpp_int a, mp::cpp_int b) {
  * @param[out] x,y integers x,y such that ax + by = gcd(a, b)
  * @return gcd(a, b)
  */
-mp::cpp_int extended_gcd(mp::cpp_int a, mp::cpp_int b, mp::cpp_int& x, mp::cpp_int& y) {
-    if (b == 0) {
-        x = 1;
-        y = 0;
-        return abs(a);
+mp::cpp_int extended_gcd(mp::cpp_int a, mp::cpp_int b, mp::cpp_int &x, mp::cpp_int &y) {
+    x = 1;
+    y = 0;
+    
+    if (b == 0) return abs(a);
+
+    mp::cpp_int x1 = 0, y1 = 1;
+    mp::cpp_int a1 = a, b1 = b;
+    mp::cpp_int quotient, tmp;
+    while (b1 != 0) {
+        quotient = a1 / b1;
+
+        tmp = a1;
+        a1 = b1;
+        b1 = tmp - quotient * b1;
+
+        tmp = x;
+        x = x1;
+        x1 = tmp - quotient * x1;
+
+        tmp = y;
+        y = y1;
+        y1 = tmp - quotient * y1;
     }
-    
-    mp::cpp_int x1, y1;
-    mp::cpp_int d = extended_gcd(b, a % b, x1, y1);
-    
-    x = y1;
-    y = x1 - y1 * (a / b);
-    return d;
+    return abs(a1);
 }
+//mp::cpp_int extended_gcd(mp::cpp_int a, mp::cpp_int b, mp::cpp_int& x, mp::cpp_int& y) {
+//    if (b == 0) {
+//        x = 1;
+//        y = 0;
+//        return abs(a);
+//    }
+//
+//    mp::cpp_int x1, y1;
+//    mp::cpp_int d = extended_gcd(b, a % b, x1, y1);
+//
+//    x = y1;
+//    y = x1 - y1 * (a / b);
+//    return d;
+//}
 
 /**
  * Compute lcm(a_0, a_1, ..., a_n), where
