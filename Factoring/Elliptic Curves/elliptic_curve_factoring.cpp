@@ -62,12 +62,11 @@ namespace mp = boost::multiprecision;
  * (Methods (1) and (2) will require a ton of memory to store all ~ n/log(n) (Prime # Thm)
  * prime numbers <= n when n is large, so they will not be practical.)
  *
- * @param n number to factor
  * @param B smoothness bound
  * @return lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  *
  */
-mp::cpp_int compute_E(const mp::cpp_int& n, const mp::cpp_int& B) {
+mp::cpp_int compute_E(const mp::cpp_int& B) {
     mp::cpp_int lcm = 1;
     for (mp::cpp_int i = 2; i <= B; i++) {
         lcm = lcm / gcd(lcm, i) * i;
@@ -77,7 +76,7 @@ mp::cpp_int compute_E(const mp::cpp_int& n, const mp::cpp_int& B) {
 /*
  * Directly compute lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  */
-//mp::cpp_int compute_E(mp::cpp_int n, mp::cpp_int B) {
+//mp::cpp_int compute_E(mp::cpp_int B) {
 //    mp::cpp_int E = 1;
 //
 //    std::vector<mp::cpp_int> primes = sieve_of_eratosthenes(B);
@@ -281,7 +280,7 @@ mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, c
      * elliptic curve fails to find a non-trivial factor.
      */
     std::cout << "B: " << B << std::endl;
-    //mp::cpp_int E = compute_E(n, B);
+    //mp::cpp_int E = compute_E(B);
     //std::cout << "E: " << E << std::endl;
     
     EllipticCurve* C = new EllipticCurve(a, b, n);
@@ -427,7 +426,7 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
     mp::cpp_int B = B1.convert_to<mp::cpp_int>();
     
     // If n is not prime, find a non-trivial divisor:
-    mp::cpp_int E = compute_E(n, B);
+    mp::cpp_int E = compute_E(B);
     mp::cpp_int divisor = lenstra_elliptic_curve(n, B, E);
     //mp::cpp_int divisor = lenstra_elliptic_curve(n, B);
     int num_curves = 1;

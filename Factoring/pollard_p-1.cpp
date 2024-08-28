@@ -146,10 +146,10 @@ long long int floor_log(long long int n, long long int b) {
  * for better odds of factoring, although E will be much larger
  * and factoring will take a bit longer.
  *
- * @param n number to factor
  * @param B smoothness bound
+ * @return lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  */
-long long int compute_E(long long int n, long long int B) {
+long long int compute_E(long long int B) {
     long long int E = 1;
 
     std::vector<long long int> primes = sieve_of_eratosthenes(B);
@@ -179,7 +179,7 @@ long long int compute_E(long long int n, long long int B) {
  */
 long long int pollard_p_1(long long int n) {
     long long int B = pow(n, 0.25);
-    long long int E = compute_E(n, B);
+    long long int E = compute_E(B);
 
     // Generate 'x' uniformly at random from Z_n^*
     long long int x = random_element_Zn_mult(n);

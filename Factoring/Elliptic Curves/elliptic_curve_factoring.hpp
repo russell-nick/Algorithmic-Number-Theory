@@ -29,12 +29,11 @@ namespace mp = boost::multiprecision;
  * for better odds of factoring, although E will be much larger
  * and factoring will take a bit longer. lcm(1...B) is a standard choice.
  *
- * @param n number to factor
  * @param B smoothness bound
  * @return lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  *
  */
-mp::cpp_int compute_E(const mp::cpp_int& n, const mp::cpp_int& B);
+mp::cpp_int compute_E(const mp::cpp_int& B);
 
 /**
  * "Psuedo-addition" from Lenstra's Elliptic Curve Factorization paper.

@@ -23,10 +23,10 @@
  * for better odds of factoring, although E will be much larger
  * and factoring will take a bit longer.
  *
- * @param n number to factor
  * @param B smoothness bound
+ * @return lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  */
-long long int compute_E(long long int n, long long int B);
+long long int compute_E(long long int B);
 
 /**
  * Pollard's p-1 Factoring (to split n)
