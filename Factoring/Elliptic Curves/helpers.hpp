@@ -8,7 +8,7 @@
 #ifndef HELPERS_HPP
 #define HELPERS_HPP
 
-#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/multiprecision/gmp.hpp>
 
 namespace mp = boost::multiprecision;
 
@@ -32,7 +32,7 @@ std::vector<long long int> sieve_of_eratosthenes(long long int n);
  * @param b base
  * @return floor(log_b(n))
  */
-long long int floor_log(mp::cpp_int n, mp::cpp_int b);
+long long int floor_log(mp::mpz_int n, mp::mpz_int b);
 
 /**
  * Calculate the least non-negative residue of 'a' modulo 'n'
@@ -48,7 +48,7 @@ long long int floor_log(mp::cpp_int n, mp::cpp_int b);
  * @param n modulus
  * @return a (mod n)
  */
-mp::cpp_int mod(mp::cpp_int a, mp::cpp_int n);
+mp::mpz_int mod(mp::mpz_int a, mp::mpz_int n);
 
 /**
  * Compute a^e (mod n) using binary exponentiation
@@ -58,7 +58,7 @@ mp::cpp_int mod(mp::cpp_int a, mp::cpp_int n);
  * @param n modulus
  * @return a^e (mod n)
  */
-mp::cpp_int mod_pow(mp::cpp_int a, mp::cpp_int e, mp::cpp_int n);
+mp::mpz_int mod_pow(mp::mpz_int a, mp::mpz_int e, mp::mpz_int n);
 
 
 /**
@@ -69,7 +69,7 @@ mp::cpp_int mod_pow(mp::cpp_int a, mp::cpp_int e, mp::cpp_int n);
  * @param a,b
  * @return gcd(a, b)
  */
-mp::cpp_int gcd(mp::cpp_int a, mp::cpp_int b);
+mp::mpz_int gcd(mp::mpz_int a, mp::mpz_int b);
 
 /**
  * Use the Extended Euclidean Algorithm to find gcd(a, b) and solve
@@ -82,7 +82,7 @@ mp::cpp_int gcd(mp::cpp_int a, mp::cpp_int b);
  * @param[out] x,y integers x,y such that ax + by = gcd(a, b)
  * @return gcd(a, b)
  */
-mp::cpp_int extended_gcd(mp::cpp_int a, mp::cpp_int b, mp::cpp_int& x, mp::cpp_int& y);
+mp::mpz_int extended_gcd(mp::mpz_int a, mp::mpz_int b, mp::mpz_int& x, mp::mpz_int& y);
 
 /**
  * Compute lcm(a_0, a_1, ..., a_n), where
@@ -91,7 +91,7 @@ mp::cpp_int extended_gcd(mp::cpp_int a, mp::cpp_int b, mp::cpp_int& x, mp::cpp_i
  * @param nums vector of numbers to take lcm of
  * @return lcm of all integers in 'nums'
  */
-mp::cpp_int lcm(const std::vector<mp::cpp_int>& nums);
+mp::mpz_int lcm(const std::vector<mp::mpz_int>& nums);
 
 /**
  * Miller-Rabin Prime Test (k iterations)
@@ -103,6 +103,6 @@ mp::cpp_int lcm(const std::vector<mp::cpp_int>& nums);
  * @param k iterations
  * @return true if n is prime (probability >= 1-(1/4)^k), false if n is definitely composite
  */
-bool miller_rabin(mp::cpp_int n, int k);
+bool miller_rabin(mp::mpz_int n, int k);
 
 #endif /* HELPERS_HPP */

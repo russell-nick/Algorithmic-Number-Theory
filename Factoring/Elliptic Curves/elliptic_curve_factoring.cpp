@@ -17,8 +17,8 @@
 #include <utility>  // pair
 #include <vector>
 
-#include <boost/multiprecision/cpp_int.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
+#include <boost/multiprecision/gmp.hpp>
 
 #include "elliptic_curve_factoring.hpp"
 #include "elliptic_curve.hpp"
@@ -62,14 +62,13 @@ namespace mp = boost::multiprecision;
  * (Methods (1) and (2) will require a ton of memory to store all ~ n/log(n) (Prime # Thm)
  * prime numbers <= n when n is large, so they will not be practical.)
  *
- * @param n number to factor
  * @param B smoothness bound
  * @return lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  *
  */
-mp::cpp_int compute_E(const mp::cpp_int& n, const mp::cpp_int& B) {
-    mp::cpp_int lcm = 1;
-    for (mp::cpp_int i = 2; i <= B; i++) {
+mp::mpz_int compute_E(const mp::mpz_int& B) {
+    mp::mpz_int lcm = 1;
+    for (mp::mpz_int i = 2; i <= B; i++) {
         lcm = lcm / gcd(lcm, i) * i;
     }
     return lcm;
@@ -77,10 +76,10 @@ mp::cpp_int compute_E(const mp::cpp_int& n, const mp::cpp_int& B) {
 /*
  * Directly compute lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  */
-//mp::cpp_int compute_E(mp::cpp_int n, mp::cpp_int B) {
-//    mp::cpp_int E = 1;
+//mp::mpz_int compute_E(mp::mpz_int B) {
+//    mp::mpz_int E = 1;
 //
-//    std::vector<mp::cpp_int> primes = sieve_of_eratosthenes(B);
+//    std::vector<mp::mpz_int> primes = sieve_of_eratosthenes(B);
 //    for (auto p : primes) {
 //        long long int exponent = floor_log(B, p); // floor(log_p(n))
 //        E *= pow(p, exponent); // replace pow with binary exp / loop
@@ -115,15 +114,15 @@ mp::cpp_int compute_E(const mp::cpp_int& n, const mp::cpp_int& B) {
  *                      or d = 0 if no nontrivial divisor is found (R != inf)
  *
  */
-std::pair<ECPoint, mp::cpp_int> partial_addition(const ECPoint& P, const ECPoint& Q) {
+std::pair<ECPoint, mp::mpz_int> partial_addition(const ECPoint& P, const ECPoint& Q) {
     if (P.inf) return {Q, 0};
     if (Q.inf) return {P, 0};
 
-    mp::cpp_int n = P.E->n;
-    mp::cpp_int x, y;
+    mp::mpz_int n = P.E->n;
+    mp::mpz_int x, y;
     // Using mod(P.x - Q.x, n) to get the least non-negative residue is required
     // here since we need the modular inverse of (P.x - Q.x)
-    mp::cpp_int d = extended_gcd(mod(P.x - Q.x, n), n, x, y);
+    mp::mpz_int d = extended_gcd(mod(P.x - Q.x, n), n, x, y);
     
     // Now we have x, y such that (P.x - Q.x)x + ny = d
     // or (P.x - Q.x)x = d (mod n)
@@ -135,12 +134,12 @@ std::pair<ECPoint, mp::cpp_int> partial_addition(const ECPoint& P, const ECPoint
         // Since d = 1, we have (P.x - Q.x)x = 1 (mod n)
         // so x is the multiplicative inverse of (P.x - Q.x)
         // (denominator in this addition law case)
-        mp::cpp_int denom = x % n;                           // Optional: Replace % n with mod function
-        mp::cpp_int lambda = ((P.y - Q.y) * denom) % n;      // Optional: Replace % n with mod function
+        mp::mpz_int denom = x % n;                           // Optional: Replace % n with mod function
+        mp::mpz_int lambda = ((P.y - Q.y) * denom) % n;      // Optional: Replace % n with mod function
         
         // Get x, y coordinates for P + Q:
-        mp::cpp_int x_3 = (lambda * lambda - P.x - Q.x) % n; // Optional: Replace % n with mod function
-        mp::cpp_int y_3 = (lambda * (P.x - x_3) - P.y) % n;  // Optional: Replace % n with mod function
+        mp::mpz_int x_3 = (lambda * lambda - P.x - Q.x) % n; // Optional: Replace % n with mod function
+        mp::mpz_int y_3 = (lambda * (P.x - x_3) - P.y) % n;  // Optional: Replace % n with mod function
         return {ECPoint(x_3, y_3, false, P.E), 0};
     }
     else // d = n => P.x - Q.x = 0 (mod n) => P.x = Q.x
@@ -160,12 +159,12 @@ std::pair<ECPoint, mp::cpp_int> partial_addition(const ECPoint& P, const ECPoint
         // Since d = 1, we have (P.y + Q.y)x = 1 (mod n)
         // so x is the multiplicative inverse of (P.y + Q.y)
         // (denominator in this addition law case)
-        mp::cpp_int denom = x % n;                           // Optional: Replace % n with mod function
-        mp::cpp_int lambda = ((3 * P.x * P.x + P.E->a) * denom) % n;
+        mp::mpz_int denom = x % n;                           // Optional: Replace % n with mod function
+        mp::mpz_int lambda = ((3 * P.x * P.x + P.E->a) * denom) % n;
         
         // Get x, y coordinates for P + Q:
-        mp::cpp_int x_3 = (lambda * lambda - P.x - Q.x) % n; // Optional: Replace % n with mod function
-        mp::cpp_int y_3 = (lambda * (P.x - x_3) - P.y) % n;  // Optional: Replace % n with mod function
+        mp::mpz_int x_3 = (lambda * lambda - P.x - Q.x) % n; // Optional: Replace % n with mod function
+        mp::mpz_int y_3 = (lambda * (P.x - x_3) - P.y) % n;  // Optional: Replace % n with mod function
         return {ECPoint(x_3, y_3, false, P.E), 0};
     }
 }
@@ -188,10 +187,10 @@ std::pair<ECPoint, mp::cpp_int> partial_addition(const ECPoint& P, const ECPoint
  *                      or d is a nontrivial divisor (R != k*P since we exit early)
  *
  */
-std::pair<ECPoint, mp::cpp_int> partial_multiplication(mp::cpp_int k, ECPoint P) {
+std::pair<ECPoint, mp::mpz_int> partial_multiplication(mp::mpz_int k, ECPoint P) {
     // Start with identity
     ECPoint result = ECPoint(P.x, P.y, true, P.E);
-    mp::cpp_int d = 0, n = P.E->n;
+    mp::mpz_int d = 0, n = P.E->n;
     while (k > 0) {
         if (k % 2 == 1) { // k & 1
             std::tie(result, d) = partial_addition(result, P);
@@ -237,7 +236,7 @@ std::pair<ECPoint, mp::cpp_int> partial_multiplication(mp::cpp_int k, ECPoint P)
  * @return a non-trivial divisor of n
  *
  */
-mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, const mp::cpp_int& E) {
+mp::mpz_int lenstra_elliptic_curve(const mp::mpz_int& n, const mp::mpz_int& B, const mp::mpz_int& E) {
 
     /*
      * Generate a random elliptic curve with Weierstrass form y^2 = x^3 + ax + b
@@ -248,9 +247,9 @@ mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, c
      */
     std::random_device rd;
     std::mt19937 generator(rd());
-    std::uniform_int_distribution<mp::cpp_int> distribution(0, n-1);
-    mp::cpp_int a = distribution(generator), x = distribution(generator), y = distribution(generator);
-    mp::cpp_int b = (y * y - (x * x * x) - a*x) % n;
+    std::uniform_int_distribution<mp::mpz_int> distribution(0, n-1);
+    mp::mpz_int a = distribution(generator), x = distribution(generator), y = distribution(generator);
+    mp::mpz_int b = (y * y - (x * x * x) - a*x) % n;
 
     while ( (4*a*a*a + 27*b*b) % n == 0) {
         a = distribution(generator);
@@ -265,7 +264,7 @@ mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, c
               << "P = (x:y:1) = (" << x << ":" << y << ":1) " << std::endl;
     
     // Try gcd(4a^3 + 27b^2, n) to see if we are lucky (gcd != 1). Otherwise, continue.
-    mp::cpp_int d1 = gcd(mod(4*a*a*a + 27*b*b, n), n);
+    mp::mpz_int d1 = gcd(mod(4*a*a*a + 27*b*b, n), n);
     if (d1 < 1 && d1 < n) {
         std::cout << "Lucky split before EC factoring!: 1 < gcd(discriminant, n) < n" << std::endl;
         return d1;
@@ -281,7 +280,7 @@ mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, c
      * elliptic curve fails to find a non-trivial factor.
      */
     std::cout << "B: " << B << std::endl;
-    //mp::cpp_int E = compute_E(n, B);
+    //mp::mpz_int E = compute_E(B);
     //std::cout << "E: " << E << std::endl;
     
     EllipticCurve* C = new EllipticCurve(a, b, n);
@@ -319,11 +318,11 @@ mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, c
  * @return prime decomposition of f1*f2 as vector of pairs (p_1, e_1), ..., (p_r, e_r),
  *         where f1*f2 = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of f1*f2
  */
-std::vector<std::pair<mp::cpp_int, mp::cpp_int>> merge_factors(
-    const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f1,
-    const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f2
+std::vector<std::pair<mp::mpz_int, mp::mpz_int>> merge_factors(
+    const std::vector<std::pair<mp::mpz_int, mp::mpz_int>>& f1,
+    const std::vector<std::pair<mp::mpz_int, mp::mpz_int>>& f2
 ) {
-    std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factors;
+    std::vector<std::pair<mp::mpz_int, mp::mpz_int>> factors;
     long long int i = 0, j = 0, n1 = f1.size(), n2 = f2.size();
     if (f1.size() == 0) return f2;
     if (f2.size() == 0) return f1;
@@ -368,7 +367,7 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> merge_factors(
  * @return vector of pairs (p_1, e_1), ..., (p_r, e_r),
  *         where n = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of n
  */
-std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
+std::vector<std::pair<mp::mpz_int, mp::mpz_int>> factor(mp::mpz_int n) {
     // If prime with probability >= 1 - (1/4)^k:
     int k = 8;
     if (miller_rabin(n, k)) {
@@ -380,7 +379,7 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
     // Trial division by primes <= 100,000
     // (one can also just replace the for loop with trial division by 2 <= i <= 100,000)
     std::string small_factor_decomposition = "";
-    std::vector<std::pair<mp::cpp_int, mp::cpp_int>> small_factors;
+    std::vector<std::pair<mp::mpz_int, mp::mpz_int>> small_factors;
     auto small_primes = sieve_of_eratosthenes(100000);
     for (long long int p : small_primes) {
         long long int exp = 0;
@@ -424,12 +423,12 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
      * and slowly increase the bound as we do more iterations
      */
     auto B1 = exp(sqrt(0.5 * log(mp::cpp_dec_float_50(n)) * log(log(mp::cpp_dec_float_50(n)))));
-    mp::cpp_int B = B1.convert_to<mp::cpp_int>();
+    mp::mpz_int B = B1.convert_to<mp::mpz_int>();
     
     // If n is not prime, find a non-trivial divisor:
-    mp::cpp_int E = compute_E(n, B);
-    mp::cpp_int divisor = lenstra_elliptic_curve(n, B, E);
-    //mp::cpp_int divisor = lenstra_elliptic_curve(n, B);
+    mp::mpz_int E = compute_E(B);
+    mp::mpz_int divisor = lenstra_elliptic_curve(n, B, E);
+    //mp::mpz_int divisor = lenstra_elliptic_curve(n, B);
     int num_curves = 1;
     while (divisor == 0) {
         std::cout << "Failed to find non-trivial divisor. Generating new elliptic curve." << std::endl;
@@ -442,7 +441,7 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
             num_curves = 0;
         }
     }
-    mp::cpp_int divisor2 = n / divisor;
+    mp::mpz_int divisor2 = n / divisor;
     std::cout << "Split n: " << n << " = " << divisor << " * " << divisor2 << std::endl;
     
     // Recurse to find prime factors of the nontrivial divisors 'divisor' and 'divisor2'
@@ -460,7 +459,7 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n) {
  * @param factors vector of pairs (p_1, e_1), ..., (p_r, e_r),
  *        where n = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of n
  */
-void print_factors(const mp::cpp_int& n, const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& factors) {
+void print_factors(const mp::mpz_int& n, const std::vector<std::pair<mp::mpz_int, mp::mpz_int>>& factors) {
     std::cout << "\n********** Factored n **********" << std::endl;
     std::cout << n << " = ";
     for (int i = 0; i < factors.size() - 1; i++) {
@@ -471,26 +470,26 @@ void print_factors(const mp::cpp_int& n, const std::vector<std::pair<mp::cpp_int
 
 int main() {
     
-    //mp::cpp_int n("398883434337287");
-    //mp::cpp_int n("46167045131415113");
-    //mp::cpp_int n("64211816600515193");
-    //mp::cpp_int n("168541512131094651323");
-    //mp::cpp_int n("631211032315670776841");
-    //mp::cpp_int n("4132846513818654136451");
-    //mp::cpp_int n("4516511326451341281684513");
-    //mp::cpp_int n("3146531246531241245132451321");
-    //mp::cpp_int n("4269021180054189416198169786894227");
-    //mp::cpp_int n("7853316850129");
+    //mp::mpz_int n("398883434337287");
+    //mp::mpz_int n("46167045131415113");
+    //mp::mpz_int n("64211816600515193");
+    //mp::mpz_int n("168541512131094651323");
+    //mp::mpz_int n("631211032315670776841");
+    //mp::mpz_int n("4132846513818654136451");
+    //mp::mpz_int n("4516511326451341281684513");
+    //mp::mpz_int n("3146531246531241245132451321");
+    //mp::mpz_int n("4269021180054189416198169786894227");
+    //mp::mpz_int n("7853316850129");
     
-    //mp::cpp_int n("18644474572985789975837398427254139850324935126641");
-    //mp::cpp_int n("610703718544355446139790085966"); // 2^1 * 542237^1 * 645187^1 * 49688141^1 * 17566007477^1
-    //mp::cpp_int n("1847294298523"); // 1007557 * 1833439 * 6788563
+    //mp::mpz_int n("18644474572985789975837398427254139850324935126641");
+    //mp::mpz_int n("610703718544355446139790085966"); // 2^1 * 542237^1 * 645187^1 * 49688141^1 * 17566007477^1
+    //mp::mpz_int n("1847294298523"); // 1007557 * 1833439 * 6788563
     
     /*
      * Factor with Lenstra's Elliptic Curve Method
      */
     std::cout << "\n********** Factoring with Elliptic Curve **********" << std::endl;
-    mp::cpp_int n("41498298392926620982104401176");
+    mp::mpz_int n("41498298392926620982104401176");
     std::cout << n << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
     auto factors = factor(n);

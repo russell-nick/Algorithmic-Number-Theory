@@ -8,18 +8,18 @@
 #include <ostream>
 #include <stdexcept>
 
-#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/multiprecision/gmp.hpp>
 
 #include "elliptic_curve.hpp"
 
 namespace mp = boost::multiprecision;
 
-EllipticCurve::EllipticCurve(mp::cpp_int a, mp::cpp_int b, mp::cpp_int n) : a(a), b(b), n(n) {
+EllipticCurve::EllipticCurve(mp::mpz_int a, mp::mpz_int b, mp::mpz_int n) : a(a), b(b), n(n) {
     if (discriminant() == 0)
         throw std::invalid_argument("Attempted to initialize an elliptic curve with singular curve");
 };
 
-mp::cpp_int EllipticCurve::discriminant() {
+mp::mpz_int EllipticCurve::discriminant() {
     return (4*(this->a * this->a * this->a) + 27*(this->b * this->b)) % this->n;
 }
 
@@ -28,7 +28,7 @@ std::ostream& operator<<(std::ostream& os, const EllipticCurve& obj) {
 }
 
 
-ECPoint::ECPoint(mp::cpp_int x, mp::cpp_int y, bool inf, EllipticCurve* E) : x(x), y(y), inf(inf), E(E) {};
+ECPoint::ECPoint(mp::mpz_int x, mp::mpz_int y, bool inf, EllipticCurve* E) : x(x), y(y), inf(inf), E(E) {};
 
 // TODO: Add mod_inverse function from modular.h and verify that this elliptic curve addition below works.
 /*
@@ -51,8 +51,8 @@ ECPoint::ECPoint(mp::cpp_int x, mp::cpp_int y, bool inf, EllipticCurve* E) : x(x
 //    if (this->inf) return P;
 //    if (P.inf) return *this;
 //
-//    mp::cpp_int n = this->E->n;
-//    mp::cpp_int lambda;
+//    mp::mpz_int n = this->E->n;
+//    mp::mpz_int lambda;
 //
 //    // Not the same point
 //    if (this->x != P.x || this->y != P.y) {
@@ -69,7 +69,7 @@ ECPoint::ECPoint(mp::cpp_int x, mp::cpp_int y, bool inf, EllipticCurve* E) : x(x
 //    if (lambda == 0) return ECPoint{this->x, this->y, true, this->E}; // inf
 //    // x3 = lambda^2 - x1 - x2
 //    // y3 = lambda(x1 - x3) - y1
-//    mp::cpp_int x, y;
+//    mp::mpz_int x, y;
 //    x = (lambda * lambda - this->x - P.x) % n;
 //    y = (lambda * (this->x - x) - this->y) % n;
 //    return ECPoint{x, y, false, this->E};

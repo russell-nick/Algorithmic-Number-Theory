@@ -9,7 +9,8 @@
 #define ELLIPTIC_CURVE_HPP
 
 #include <ostream>
-#include <boost/multiprecision/cpp_int.hpp>
+
+#include <boost/multiprecision/gmp.hpp>
 
 namespace mp = boost::multiprecision;
 
@@ -34,10 +35,10 @@ namespace mp = boost::multiprecision;
 class EllipticCurve
 {
 public:
-    mp::cpp_int a, b, n;
+    mp::mpz_int a, b, n;
     
-    EllipticCurve(mp::cpp_int a, mp::cpp_int b, mp::cpp_int n);
-    mp::cpp_int discriminant();
+    EllipticCurve(mp::mpz_int a, mp::mpz_int b, mp::mpz_int n);
+    mp::mpz_int discriminant();
     friend std::ostream& operator<<(std::ostream& os, const EllipticCurve& obj);
 };
 
@@ -53,10 +54,10 @@ class ECPoint
 {
 public:
     EllipticCurve* E;   // Elliptic Curve the point is on
-    mp::cpp_int x, y;   // Point's x,y coordinates
+    mp::mpz_int x, y;   // Point's x,y coordinates
     bool inf;           // true if point at infinity (identity (0:1:0))
     
-    ECPoint(mp::cpp_int x,  mp::cpp_int y, bool inf, EllipticCurve* E);
+    ECPoint(mp::mpz_int x,  mp::mpz_int y, bool inf, EllipticCurve* E);
     //ECPoint operator+(const ECPoint& P); // defined iff n is prime
     friend std::ostream& operator<<(std::ostream& os, const ECPoint& obj);
 };
