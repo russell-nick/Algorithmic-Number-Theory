@@ -9,7 +9,8 @@
 #define ELLIPTIC_CURVE_FACTORING_HPP
 
 #include <utility>  // pair
-#include <boost/multiprecision/cpp_int.hpp>
+
+#include <boost/multiprecision/gmp.hpp>
 
 #include "elliptic_curve.hpp"
 
@@ -33,7 +34,7 @@ namespace mp = boost::multiprecision;
  * @return lcm(1...B) = prod_{prime p <= B} p^(floor(log B / log p))
  *
  */
-mp::cpp_int compute_E(const mp::cpp_int& B);
+mp::mpz_int compute_E(const mp::mpz_int& B);
 
 /**
  * "Psuedo-addition" from Lenstra's Elliptic Curve Factorization paper.
@@ -49,7 +50,7 @@ mp::cpp_int compute_E(const mp::cpp_int& B);
  *                      or d = 0 if no nontrivial divisor is found (R != inf)
  *
  */
-std::pair<ECPoint, mp::cpp_int> partial_addition(const ECPoint& P, const ECPoint& Q);
+std::pair<ECPoint, mp::mpz_int> partial_addition(const ECPoint& P, const ECPoint& Q);
 
 /**
  * "Psuedo-multiplication" from Lenstra's Elliptic Curve Factorization paper
@@ -64,7 +65,7 @@ std::pair<ECPoint, mp::cpp_int> partial_addition(const ECPoint& P, const ECPoint
  *                      or d is a nontrivial divisor (R != k*P since we exit early)
  *
  */
-std::pair<ECPoint, mp::cpp_int> partial_multiplication(mp::cpp_int k, ECPoint P);
+std::pair<ECPoint, mp::mpz_int> partial_multiplication(mp::mpz_int k, ECPoint P);
 
 /**
  * Lenstra's Elliptic Curve Factoring (to split n)
@@ -86,7 +87,7 @@ std::pair<ECPoint, mp::cpp_int> partial_multiplication(mp::cpp_int k, ECPoint P)
  * @return a non-trivial divisor of n
  *
  */
-mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, const mp::cpp_int& E);
+mp::mpz_int lenstra_elliptic_curve(const mp::mpz_int& n, const mp::mpz_int& B, const mp::mpz_int& E);
 
 /**
  * Merge the prime decompositions of two non-trivial divisors of n
@@ -95,9 +96,9 @@ mp::cpp_int lenstra_elliptic_curve(const mp::cpp_int& n, const mp::cpp_int& B, c
  * @return prime decomposition of f1*f2 as vector of pairs (p_1, e_1), ..., (p_r, e_r),
  *         where f1*f2 = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of f1*f2
  */
-std::vector<std::pair<mp::cpp_int, mp::cpp_int>> merge_factors(
-    const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f1,
-    const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& f2);
+std::vector<std::pair<mp::mpz_int, mp::mpz_int>> merge_factors(
+    const std::vector<std::pair<mp::mpz_int, mp::mpz_int>>& f1,
+    const std::vector<std::pair<mp::mpz_int, mp::mpz_int>>& f2);
 
 /**
  * Full factorization using Lenstra's Elliptic Curve method.
@@ -114,7 +115,7 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> merge_factors(
  * @return returns vector of pairs (p_1, e_1), ..., (p_r, e_r),
  *         where n = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of n
  */
-std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n);
+std::vector<std::pair<mp::mpz_int, mp::mpz_int>> factor(mp::mpz_int n);
 
 /**
  * Prints the prime decomposition of a factored number
@@ -123,6 +124,6 @@ std::vector<std::pair<mp::cpp_int, mp::cpp_int>> factor(mp::cpp_int n);
  * @param factors vector of pairs (p_1, e_1), ..., (p_r, e_r),
  *        where n = p_1^{e_1} * ... * p_r^{e_r} is the prime decomposition of n
  */
-void print_factors(const mp::cpp_int& n, const std::vector<std::pair<mp::cpp_int, mp::cpp_int>>& factors);
+void print_factors(const mp::mpz_int& n, const std::vector<std::pair<mp::mpz_int, mp::mpz_int>>& factors);
 
 #endif /* ELLIPTIC_CURVE_FACTORING_HPP */
