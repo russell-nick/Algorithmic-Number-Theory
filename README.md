@@ -5,16 +5,14 @@
 2. [Future Work](#future-work)
 
 ## Project Overview
-This project is a collection of various algorithms related to Algorithmic / Computational Number Theory. The main topics covered are general number theory, factorization, primality testing, discrete logarithms, psuedo-randomness, and other miscellaneous mathematical topics. 
-
-This is mainly for personal / educational purposes, so not all algorithms have fully optimized implementations for practical use. For example, my implementation of Lenstra's Elliptic Curve Factoring method uses Boost's multiprecision library, for the arbitrary precision integer type `cpp_int`, over the GNU multiprecision library (which should be faster) for simplicity. 
+This project is a collection of various algorithms related to Algorithmic / Computational Number Theory. The main topics covered are general number theory, factorization, primality testing, discrete logarithms, psuedo-randomness, and other miscellaneous mathematical topics.
 
 *A brief list of currently implemented algorithms are listed below:*
 
 ### Current Algorithms
 #### Number Theory
 - Modular Arithmetic
-	- Modulo operation, modular binary exponentiation, modular $m$-ary exponentiation, modular multiplication (binary exponentiation style addition), Jacobi symbol, Legendre symbol, determine if a number is quadratic residue, modular inverse, linear congruence solver, system of linear congruences solver, linear diophantine solver
+	- Modulo operation, modular binary exponentiation, modular $m$-ary exponentiation, modular multiplication (binary exponentiation style addition), Jacobi symbol, Legendre symbol, determine if a number is quadratic residue, modular inverse, linear congruence solver, system of linear congruences solver, linear diophantine equation solver
 - GCD / LCM
 	- Euclidean algorithm, Extended Euclidean algorithm, LCM, GCD / LCM of a list of numbers
 - Exponentiation
