@@ -46,7 +46,7 @@ std::pair<double, double> mult_ext_field(const std::pair<double, double> a, cons
 std::pair<Rational, Rational> mult_ext_field_rational(const std::pair<Rational, Rational>& a,
                                                       const std::pair<Rational, Rational>& b) {
     // ac + 5bd, ad + bc
-    return {a.first * b.first + a.second * b.second * 5, a.first * b.second + a.second * b.first};
+    return {a.first * b.first + 5 * a.second * b.second, a.first * b.second + a.second * b.first};
 }
 
 /**
@@ -391,7 +391,7 @@ int main() {
     
     std::cout << "y + 5: " << y + 5 << std::endl;
     std::cout << "y * 5: " << y * 5 << std::endl;
-    // std::cout << "5 * y: " << 5 * y << std::endl;
+    std::cout << "5 * y: " << 5 * y << std::endl;
     std::cout << "y * 5 / 2: " << (y * 5) / 2 << std::endl;
     
     y += Rational(5, 2);

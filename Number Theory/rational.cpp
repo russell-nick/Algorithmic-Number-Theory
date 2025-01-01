@@ -48,30 +48,59 @@ Rational& Rational::operator/= (long long int x) {
     return *this;
 }
 
-Rational Rational::operator+ (long long int x) const {
-    Rational temp = Rational(*this);
+//Rational Rational::operator+ (long long int x) const {
+//    Rational temp = Rational(*this);
+//    temp.num += (x * temp.denom);
+//    return temp;
+//}
+//Rational Rational::operator- (long long int x) const {
+//    Rational temp = Rational(*this);
+//    temp.num += (x - temp.denom);
+//    return temp;
+//}
+//Rational Rational::operator* (long long int x) const {
+//    Rational temp = Rational(*this);
+//    long long int d = gcd(temp.denom, x);
+//    temp.num *= (x / d);
+//    temp.denom /= d;
+//    return temp;
+//}
+//Rational Rational::operator/ (long long int x) const {
+//    Rational temp = Rational(*this);
+//    long long int d = gcd(temp.num, x);
+//    temp.num /= d;
+//    temp.denom *= (x / d);
+//    return temp;
+//}
+Rational operator+ (const Rational& r, long long int x) {
+    Rational temp = Rational(r);
     temp.num += (x * temp.denom);
     return temp;
 }
-Rational Rational::operator- (long long int x) const {
-    Rational temp = Rational(*this);
+Rational operator- (const Rational& r, long long int x) {
+    Rational temp = Rational(r);
     temp.num += (x - temp.denom);
     return temp;
 }
-Rational Rational::operator* (long long int x) const {
-    Rational temp = Rational(*this);
-    long long int d = gcd(denom, x);
+Rational operator* (const Rational& r, long long int x) {
+    Rational temp = Rational(r);
+    long long int d = gcd(temp.denom, x);
     temp.num *= (x / d);
     temp.denom /= d;
     return temp;
 }
-Rational Rational::operator/ (long long int x) const {
-    Rational temp = Rational(*this);
-    long long int d = gcd(num, x);
+Rational operator/ (const Rational& r, long long int x) {
+    Rational temp = Rational(r);
+    long long int d = gcd(temp.num, x);
     temp.num /= d;
     temp.denom *= (x / d);
     return temp;
 }
+
+Rational operator+ (long long int x, const Rational& r) {return r + x;}
+Rational operator- (long long int x, const Rational& r) {return r - x;}
+Rational operator* (long long int x, const Rational& r) {return r * x;}
+Rational operator/ (long long int x, const Rational& r) {return r / x;}
 
 Rational& Rational::operator+= (const Rational& other) {
     // (num / denom) + (other.num / other.denom) = (other.denom*num + denom*other.num) / (denom * other.denom)

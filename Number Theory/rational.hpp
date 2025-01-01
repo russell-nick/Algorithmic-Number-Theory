@@ -29,13 +29,18 @@ public:
     Rational& operator*= (long long int x);
     Rational& operator/= (long long int x);
     
-    // TODO: Change this to support pre & post multiplication by int
-    // friend Rational operator+(const Rational& x, long long int y);
-    // friend Rational operator+(long long int x, const Rational& y);
-    Rational operator+ (long long int x) const;
-    Rational operator- (long long int x) const;
-    Rational operator* (long long int x) const;
-    Rational operator/ (long long int x) const;
+    friend Rational operator+ (const Rational& r, long long int x);
+    friend Rational operator- (const Rational& r, long long int x);
+    friend Rational operator* (const Rational& r, long long int x);
+    friend Rational operator/ (const Rational& r, long long int x);
+    friend Rational operator+ (long long int x, const Rational& r);
+    friend Rational operator- (long long int x, const Rational& r);
+    friend Rational operator* (long long int x, const Rational& r);
+    friend Rational operator/ (long long int x, const Rational& r);
+//    Rational operator+ (long long int x) const;
+//    Rational operator- (long long int x) const;
+//    Rational operator* (long long int x) const;
+//    Rational operator/ (long long int x) const;
     
     Rational& operator+= (const Rational& other);
     Rational& operator-= (const Rational& other);
