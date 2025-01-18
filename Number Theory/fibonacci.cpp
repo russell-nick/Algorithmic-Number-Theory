@@ -35,24 +35,36 @@ double bin_pow(double a, long long int e) {
 }
 
 /**
- * Compute a * b in the extension field Q(sqrt(5))
+ * Compute x *y in the extension field Q(sqrt(5))
  *
- * // TODO: Add description
+ * Details: In the extension field Q(sqrt(5)), an element
+ * x has the form a + b*sqrt(5), where a and b are in Q.
+ * Here, let x =  a + b**sqrt(5) and y = c + d*sqrt(5).
+ * Then  x * y = (a + b*sqrt(5)) * (c + d*sqrt(5))
+ *         = ac + ad*sqrt(5) + bc*sqrt(5) + 5bd
+ *         = (ac + 5bd) + (ad + bc)*sqrt(5)
+ *
+ * @param x,y elements in Q(sqrt(5))
+ * @return x * y (in Q(sqrt(5)))
  */
-std::pair<double, double> mult_ext_field(const std::pair<double, double> a, const std::pair<double, double> b) {
+std::pair<double, double> mult_ext_field(const std::pair<double, double> x, const std::pair<double, double> y) {
     // ac + 5bd, ad + bc
-    return {a.first * b.first + 5 * a.second * b.second, a.first * b.second + a.second * b.first};
+    return {x.first * y.first + 5 * x.second * y.second, x.first * y.second + x.second * y.first};
 }
-std::pair<Rational, Rational> mult_ext_field_rational(const std::pair<Rational, Rational>& a,
-                                                      const std::pair<Rational, Rational>& b) {
+std::pair<Rational, Rational> mult_ext_field_rational(const std::pair<Rational, Rational>& x,
+                                                      const std::pair<Rational, Rational>& y) {
     // ac + 5bd, ad + bc
-    return {a.first * b.first + 5 * a.second * b.second, a.first * b.second + a.second * b.first};
+    return {x.first * y.first + 5 * x.second * y.second, x.first * y.second + x.second * y.first};
 }
 
 /**
  * Compute a^e using binary exponentiation in the extension field Q(sqrt(5))
  *
- * // TODO: Add description
+ * Complexity: O(lg e) multiplications
+ *
+ * @param a element of Q(sqrt(5)) to raise to exponent
+ * @param e exponent >= 0
+ * @return a^e
  */
 std::pair<double, double> bin_pow_ext_field(std::pair<double, double> a, long long int e) {
     // Initialize result to identity element:
@@ -66,6 +78,17 @@ std::pair<double, double> bin_pow_ext_field(std::pair<double, double> a, long lo
     }
     return result;
 }
+
+/**
+ * Compute a^e using binary exponentiation in the extension field Q(sqrt(5))
+ * (using exact arithmetic)
+ *
+ * Complexity: O(lg e) multiplications
+ *
+ * @param a element of Q(sqrt(5)) to raise to exponent
+ * @param e exponent >= 0
+ * @return a^e
+ */
 std::pair<Rational, Rational> bin_pow_ext_field_rational(std::pair<Rational, Rational> a, long long int e) {
     // Initialize result to identity element:
     std::pair<Rational, Rational> result = {Rational(1, 1), Rational(0, 1)};
@@ -82,7 +105,8 @@ std::pair<Rational, Rational> bin_pow_ext_field_rational(std::pair<Rational, Rat
 /**
  * Compute mat1 * mat2 for 2x2 matrices mat1 and mat2
  *
- * // TODO: Add description
+ * @param mat1,mat2 2x2 matrices to multiply
+ * @return mat1 * mat2 (matrix multiplication)
  */
 std::vector<std::vector<long long int>> mat2d_mult(const std::vector<std::vector<long long int>>& mat1,
                                                    const std::vector<std::vector<long long int>>& mat2) {
@@ -94,9 +118,15 @@ std::vector<std::vector<long long int>> mat2d_mult(const std::vector<std::vector
 }
 
 /**
- * Compute mat^e for a 2x2 matrix 'mat'
+ * Compute mat^e for a 2x2 matrix 'mat' using binary exponentiation
  *
- * // TODO: Add description
+ * Note: Here we do binary exponentiation as usual, but in the general linear group GLn(Z).
+ *
+ * Complexity: O(lg e) multiplications
+ *
+ * @param mat 2x2 matrix
+ * @param e exponent
+ * @return mat^e
  */
 std::vector<std::vector<long long int>> mat2d_bin_pow(std::vector<std::vector<long long int>>& mat, long long int e) {
     // Initialize result to identity element:

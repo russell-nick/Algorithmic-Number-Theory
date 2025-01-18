@@ -52,7 +52,11 @@ long long int fibonacci_const_space(long long int n);
 /**
  * Compute the n-th fibonacci number with matrix exponentation
  * using the following well-known identity:
- * 
+ * [f_n+1 f_n] = [1  1] ^n
+ * [f_n  f_n-1]    [1  0]
+ * which is found by induction after observing that
+ * [f_n+1 f_n] = [f_n    f_n-1] * [1  1]
+ * [f_n  f_n-1]    [f_n-1 f_n-2]   [1  0]
  *
  * To compute A^n for some matrix A with integer coefficients,
  * we can use repeated squaring in the general linear group GLn(Z).

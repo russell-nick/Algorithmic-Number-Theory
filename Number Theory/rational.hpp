@@ -10,7 +10,18 @@
 
 #include <ostream>
 
-// TODO: Add documentation
+/**
+ * @brief Class to support rational number arithmetic.
+ *
+ * Note: The Rational class is used to get exact arithmetic when
+ * dealing with rational numbers, as opposed to using floating point
+ * numbers and accumulating error. Currently, this is used to support
+ * calculating the n-th fibonacci number using Binet's formula in the
+ * extension field Q(sqrt(5)).
+ *
+ * @see fibonacci.cpp for use case example.
+ *
+ */
 class Rational {
 private:
     long long int num;
