@@ -21,6 +21,7 @@ This project is a collection of various algorithms related to Algorithmic / Comp
 	- Base-b integer conversion, calculate $\lfloor\log_b(n)\rfloor$
 - Binomial Coefficients
 	- Given $Q \in \mathbb{Z}^+$, find all non-trivial $(n, k)$ pairs such that $Q = \binom{n}{k}$ in $\text{poly}(\text{lg}(Q))$ time
+- Fast Fibonacci sequence calculations
 
 #### Factorization
 - Pollard's p-1 method
@@ -52,12 +53,16 @@ The project is currently set up as a collection of algorithms with reused code c
 		- Taylor series with a quadratically convergent sequence (algorithm from homework)
 - Chinese Remainder Theorem solver
 
+#### Primality Testing
+- AKS primality testing
+
 #### Factoring
 - Integer Factorization
 	- Pollard's Rho algorithm
 	- Dixon's algorithm (first provably subexponential factoring algorithm)
 - Polynomial Factorization (over Finite Fields)
 	- Berlekamp's algorithm
+ 	- Cantor-Zassenhaus algorithm
 
 #### Discrete Logarithms
 - Baby-step Giant-step algorithm
@@ -69,7 +74,6 @@ The project is currently set up as a collection of algorithms with reused code c
 #### Miscellaneous
 - Approximate $\ln(n)$ with absolute error $\le 1$ in $\text{poly}(\text{lg}(Q))$ time (using Maclaurin series)
 - Test for nontrivial symmetry of curves with parametric form $f(t) = \displaystyle \sum_{n \in \mathbb{Z}} a_ne^{int}$, where the $a_n$ are real coefficients and $i = \sqrt{-1}$, and find the maximum value of $m$ such that $f(t)$ has $m$-fold symmetry
-- Fast Fibonacci sequence calculations
 - Fast multiplication (Karatsuba's algorithm, FFT multiplication, etc.)
 
 #### Refactor project into a library
